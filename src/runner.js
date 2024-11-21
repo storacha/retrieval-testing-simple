@@ -6,6 +6,7 @@ import * as dagJSON from '@ipld/dag-json'
  */
 
 const SAMPLE_API_URL = 'https://up.web3.storage/sample'
+const TIMEOUT = 1000 * 60 * 2
 
 /**
  * @param {string[]} gateways
@@ -101,8 +102,10 @@ class GatewayTestRunner {
     let ttfb
     let status = 0
     let headers = new Headers()
+    let timeoutID
     try {
       const controller = new AbortController()
+      timeoutID = setTimeout(() => controller.abort(), TIMEOUT)
       const res = await fetch(url, { signal: controller.signal })
       status = res.status
       headers = res.headers
@@ -110,6 +113,7 @@ class GatewayTestRunner {
     } catch (err) {
       console.error(`requesting: ${url}`, err)
     } finally {
+      clearTimeout(timeoutID)
       ttfb = Date.now() - start
     }
     console.log(`${status} ${cid} ${this.#gateway} (${ttfb.toLocaleString()}ms)`)
