@@ -9,10 +9,12 @@ const sampleApiUrl = process.env.SAMPLE_API_URL
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
 const interval = process.env.INTERVAL ? parseInt(process.env.INTERVAL) : (1000 * 60)
 const region = process.env.REGION
+const authToken = process.env.AUTH_TOKEN
+if (!authToken) throw new Error('missing environment variable: AUTH_TOKEN')
 
 const runner = createRunner(gateways, { sampleApiUrl })
 const datastore = createPromDatastore({ region })
-const server = createPromServer(datastore.registry)
+const server = createPromServer(datastore.registry, authToken)
 
 // Start the server
 server.listen(port, () => {

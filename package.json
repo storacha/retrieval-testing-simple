@@ -15,6 +15,7 @@
   "dependencies": {
     "@ipld/dag-json": "^10.2.3",
     "express": "^4.21.1",
+    "express-bearer-token": "^3.0.0",
     "multiformats": "^13.3.1",
     "prom-client": "^15.1.3"
   },

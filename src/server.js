@@ -1,11 +1,21 @@
 import express from 'express'
+import bearerToken from 'express-bearer-token'
 
 /**
  * @param {import('prom-client').Registry} registry 
+ * @param {string} token
  * @returns 
  */
-export const createPromServer = (registry) => {
+export const createPromServer = (registry, token) => {
   const app = express()
+  app.use(bearerToken())
+  app.use((req, res, next) => {
+    if (req.token !== token) {
+      res.status(401).send('Unauthorized')
+    } else {
+      next()
+    }
+  })
   app.get('/metrics', async (req, res) => {
     try {
       res.setHeader('Content-Type', registry.contentType)
