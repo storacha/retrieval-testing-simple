@@ -1,13 +1,13 @@
 import client from 'prom-client'
 
 /**
- * @import { Datastore, GatewayTestResult } from './api.js'
+ * @import { Datastore, GatewayTestParams, GatewayTestResult, TestSummary } from './api.js'
  */
 
 /** @param {{ region?: string }} [options] */
 export const createPromDatastore = (options) => new PromDatastore(options)
 
-/** @implements {Datastore<{ [gateway: string]: GatewayTestResult }>} */
+/** @implements {Datastore<{ [gateway: string]: TestSummary<GatewayTestParams, GatewayTestResult> }>} */
 class PromDatastore {
   #registry
   #region
@@ -45,22 +45,22 @@ class PromDatastore {
     registry.registerMetric(this.#histogramTTFB)
   }
 
-  /** @param {{ [gateway: string]: GatewayTestResult }} results */
+  /** @param {{ [gateway: string]: TestSummary<GatewayTestParams, GatewayTestResult> }} results */
   add (results) {
     this.#counterTests.inc({ region: this.#region })
 
     for (const [gateway, result] of Object.entries(results)) {
       this.#counterStatus.inc({
         region: this.#region,
-        status: result.status,
+        status: result.results.status,
         gateway,
       })
 
       this.#histogramTTFB.observe({
         region: this.#region,
-        status: result.status,
+        status: result.results.status,
         gateway,
-      }, result.ttfb/1000)
+      }, result.results.ttfb/1000)
     }
   }
 

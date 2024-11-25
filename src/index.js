@@ -23,6 +23,11 @@ server.listen(port, () => {
 
 while (true) {
   const summary = await runner.runTest({})
+  for (const [gateway, { params, results }] of Object.entries(summary.results)) {
+    const stdio = results.status === 200 ? 'log' : 'error'
+    const msg = `${results.status} ${params.root} ${gateway} (${results.ttfb.toLocaleString()}ms)`
+    console[stdio](msg)
+  }
   datastore.add(summary.results)
   await new Promise(resolve => setTimeout(resolve, interval))
 }

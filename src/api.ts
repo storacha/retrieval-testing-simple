@@ -1,3 +1,5 @@
+import { UnknownLink } from 'multiformats'
+
 /** TestRunner runs a test using the provided parameters. */
 export interface TestRunner<P, R> {
   /** Identifier for this runner. */
@@ -12,6 +14,12 @@ export interface TestSummary<P, R> {
   params: P
   /** The result of running the test with the parameters. */
   results: R
+}
+
+/** Params for a test for a single gateway. */
+export interface GatewayTestParams {
+  /** DAG root CID. */
+  root: UnknownLink
 }
 
 /** Result of the test for a single gateway. */
